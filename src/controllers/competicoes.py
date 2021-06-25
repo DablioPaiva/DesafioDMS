@@ -2,7 +2,7 @@ from src.server.instance import server
 import sqlite3
 from ..tratamento.convert_salvar import ConverteMetros, ConverterTempo
 
-app, API = server.app, server.api
+app, api = server.app, server.api
 
 
 @app.route("/resultados")
