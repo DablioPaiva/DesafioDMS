@@ -13,3 +13,6 @@ $ python3 criar_db.py
 
 Executar:
 $ python3 main.py
+
+
+# Ainda não foi feito a junção do back com front
