@@ -1,73 +1,51 @@
-from typing import List
 from src.server.instance import server
 import sqlite3
+from ..tratamento.convert_salvar import ConverteMetros, ConverterTempo
 
-app, api = server.app, server.api
-MODALIDADES = ["100M Rasos", "Lancamento de dardos"]
+app, API = server.app, server.api
 
 
-@api.route("/competicoes")
-class Competicoes():
-    def get(self,):
+@app.route("/resultados")
+class Resultados():
+    def post(self, ):
+        request = app.payload
+        id_competicao = request['competicao']
+        atleta = request['atleta']
+        valor = request['valor']
+        unidade = request['unidade']
+        
         conn = sqlite3.connect('radar.db')
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM competicoes')
-        resultado = cursor.fetchall()
-        res_final = []
-        for row in resultado:
-           d = {
-               "id": row[0],
-               "nome": row[1],
-               "modalidade": row[2],
-               "em_andamento": row[3]
-           }
-           res_final.append(d)
+        cursor.execute('SELECT * FROM competicoes WHERE id=:id',
+                       {"id": id_competicao})
+        resultado = cursor.fetchone()
+        if resultado == None:
+            return "Id nao corresponde a nenhuma competição", 400
+        modalidade = resultado[2]
+        nome_competicao = resultado[1]
 
-        return res_final, 200
+        if resultado[3] == 1:
+            if modalidade == "100M Rasos":
+                valor = ConverterTempo(valor, unidade)
 
-    def post(self,):
-        request = api.payload
-        nome = request['nome']
-        modalidade = request['modalidade']
+            if modalidade != "lancamento de dardos":
+                cursor.execute(
+                    'SELECT * FROM resultados WHERE atleta=:atleta AND modalidade=:modalidade', {"atleta": atleta, "modalidade": modalidade})
+                if cursor.fetchall():
+                    conn.close
+                    return "Atleta já Participou dessa Competição", 400
+                
+            else:
+                cursor.execute(
+                    'SELECT count(1) FROM resultados WHERE atleta=:atleta AND modalidade=:modalidade', {"atleta": atleta, "modalidade": modalidade})
+                c = cursor.fetchall()[0][0]
+                if c >= 3:
+                    conn.close
+                    return "Atleta já teve 3 tentativas na competição", 400
 
-        if modalidade in MODALIDADES:
-            conn = sqlite3.connect('radar.db')
-            cursor = conn.cursor()
-            cursor.execute('SELECT * FROM competicoes WHERE nome=:nome AND modalidade=:modalidade',
-                           {"nome": nome, "modalidade": modalidade})
-            if cursor.fetchall():
-                conn.close()
-                return "Competição já cadastrada", 400
-
-            cursor.execute("INSERT INTO competicoes VALUES (NULL, ?, ?, 1)",
-                           (nome, modalidade))
+            cursor.execute('INSERT INTO resultados VALUES (NULL)',
+                           (id_competicao, nome_competicao, modalidade, atleta, valor))
             conn.commit()
-
-            cursor.execute('SELECT * FROM competicoes WHERE nome=:nome AND modalidade=:modalidade',
-                           {"nome": nome, "modalidade": modalidade})
-
-            resultado = cursor.fetchall()
-            res_final = []
-            for row in resultado:
-                d = {
-                "id": row[0],
-                "nome": row[1],
-                "modalidade": row[2],
-                "em_andamento": row[3]
-                }
-                res_final.append(d)
-
-            return res_final, 200
-
-        else:
-            return "Modalidade nao existe! Utilize no campo Modalidade: ('100M Rasos' ou 'lancamento de dardos')", 400
-
-    def put(self,):
-        request = api.payload
-        id_competicao = int(request['id'])
-        conn = sqlite3.connect('radar.db')
-        cursor = conn.cursor()
-        cursor.execute('UPDATE competicoes SET em_andamento = 0 WHERE id=:id',{"id": id_competicao})
-        conn.commit()
-        conn.close()
-        return "Competição Finalizada ", 200
+            
+            return 200
+        return "Essa Competição já foi finalizada", 400
