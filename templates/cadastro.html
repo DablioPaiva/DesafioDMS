@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro participantes</title>
+    <title>Cadastro Atletas</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="css/cadastro.css">
@@ -11,77 +11,72 @@
     
 </head>
 
-<body>
+<body class="form-group col-md-8">
+    <h1>Cadastro de Competição</h1>
+  <!-- form id="" action="{{ url_for('')}}" method="post" enctype="application/x-www-form-urlencoded" -->
 
-    <div>
-
-    </div>
-    <div class="cadastro">
-        <div class="form-row">
-            <div>
-
-            </div>
+        <div>
+            <label>Nome da competição:</label>
+            <input id="competicao-nome" required="" type="text"
+                required="required"
         </div>
 
-        <form method="POST">
-            <div>
-                <div >
-                    <br>
-                    <h4>Nome do participante </h4>
-                    <input type="text" class="form-control" placeholder="Nome completo"
-                        required="required">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-2">
-                    <label for="exampleFormControlSelect1">Idade</label>
+        <div>
+            <label>Modalidade: </label>
+            <select>
+                <option value="">Selecione</option>
+                <option value="RA">100m rasos</option>
+                <option value="LD">Lançamento de Dardos</option>
+            </select>
+        </div>
+        
+        <div>
+            <label>Local da competição:</label>
+            <input type="text" placeholder="Digite o local da competição"
+                required="required">
+        </div>
 
-                    <input placeholder="Digite sua idade" 
-                        required="" type="number" maxlength="10" OnKeyPress="formatar('##/##/####', this)"
-                        onBlur="showhide()" required="required">
-                </div>
-                <div>
-                    <label>Data da competição</label>
-                    <input placeholder="" required="" type="date"
-                        maxlength="10" OnKeyPress="formatar('##/##/####', this)" onBlur="showhide()" required="required"
-                        required="required">
-                </div>
-                <div>
-                    <label>Horário da competição</label>
-                    <input placeholder="00:00" required=""
-                        type="hour" maxlength="10" OnKeyPress="formatar('##/##/####', this)" onBlur="showhide()"
-                        required="required">
-                </div>
+        <div>
+            <label>Data da competição:</label>
+            <input required="" type="date"
+                maxlength="10" 
+                required="required"
+        </div>
 
-            </div>
+        <div>
+            <label>Horário da competição:</label>
+            <input placeholder="00:00" required=""
+                type="hour" maxlength="10"  
+        </div>
 
-            <div class="form-row">
-                <div class="form-group col-md-8">
-                    <label>Local</label>
-                    <input type="text" class="form-control" placeholder="Digite o local da competição"
-                        required="required">
-                </div>
-            </div>
+            
 
-            <div class="form-row">
-                <div>
-                    <label>Modalidade</label>
-                    <div>
-                        <select>
-                            <option value="">Selecione</option>
-                            <option value="RA">100m rasos</option>
-                            <option value="LD">Lançamento Dardo</option>
+    <form id="add" action="{{ url_for('add')}}" method="post" enctype="application/x-www-form-urlencoded">
+        <section id="atleta">
+            <label for="nome">Nome do Atleta: </label>
+            <input id="nome" type="text" class="form-control" placeholder="Nome completo do atleta"
+                required="required">
+            <br>
+            <label for ="idade"> Idade: </label>
+            <input id='idade' placeholder="Digite a idade do atleta" 
+                type="" required="required">
+            <br>
+            <label for="altura"> Altura </label>
+            <input id="altura" type="" placeholder="Digite a altura do atleta"
+                    required="required">
 
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-</body>
+            <label for="peso"> Peso: </label>
+            <input id="peso" type="" placeholder="Digite o peso do atleta"
+                    required="required">
+            
+            <br>
+        </section>
 
+        <input type="submit" value="Avançar">
+    </form>
+    
 
-</body>
+<head>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
